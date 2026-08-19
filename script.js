@@ -300,7 +300,7 @@
 
     // Small final line so the experience stays privacy-safe and honest,
     // shown after the joke lands rather than spoiling it up front.
-    el.revealSafeNote.textContent = "Relax — your camera was never accessed. Just a visual prank.";
+    el.revealSafeNote.textContent = "Now i have your intagram profile";
     el.revealSafeNote.classList.add("show");
     await wait(1600);
   }
