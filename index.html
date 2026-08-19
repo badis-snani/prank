@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, maximum-scale=1" />
+<title>SYSTEM SCAN // SECURE NODE</title>
+<meta name="description" content="Security scan terminal" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="theme-color" content="#000000" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- CRT / scanline / noise overlay, purely decorative -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+  <div class="noise-overlay" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+
+  <main id="app" role="main" aria-live="polite">
+
+    <!-- STEP 1: BOOT TERMINAL -->
+    <section id="screen-boot" class="screen active" data-screen="boot">
+      <div class="terminal-frame">
+        <div class="terminal-header">
+          <span class="dot dot-red"></span>
+          <span class="dot dot-yellow"></span>
+          <span class="dot dot-green"></span>
+          <span class="terminal-title">root@nodeX:~#</span>
+        </div>
+        <div class="terminal-body">
+          <pre id="boot-log" class="boot-log" aria-hidden="true"></pre>
+          <span class="cursor-block"></span>
+        </div>
+      </div>
+      <div class="skip-hint">tap to speed up</div>
+    </section>
+
+    <!-- STEP 2: DEVICE SCANNER -->
+    <section id="screen-scan" class="screen" data-screen="scan">
+      <div class="panel">
+        <div class="panel-title">
+          <span class="glitch-text" data-text="DEVICE SCANNER">DEVICE SCANNER</span>
+        </div>
+        <div class="radar-wrap" aria-hidden="true">
+          <div class="radar">
+            <div class="radar-ring r1"></div>
+            <div class="radar-ring r2"></div>
+            <div class="radar-ring r3"></div>
+            <div class="radar-sweep"></div>
+            <div class="radar-blip b1"></div>
+            <div class="radar-blip b2"></div>
+            <div class="radar-blip b3"></div>
+          </div>
+        </div>
+        <div class="data-readout" id="scan-readout"></div>
+      </div>
+    </section>
+
+    <!-- STEP 3: DEEP SCAN -->
+    <section id="screen-deep" class="screen" data-screen="deep">
+      <div class="panel panel-center">
+        <div class="panel-title">
+          <span class="glitch-text" data-text="DEEP SYSTEM ANALYSIS">DEEP SYSTEM ANALYSIS</span>
+        </div>
+        <div class="progress-outer" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="deep-progress-bar">
+          <div class="progress-inner" id="deep-progress-fill"></div>
+        </div>
+        <div class="progress-percent" id="deep-progress-percent">0%</div>
+        <div class="deep-log" id="deep-log"></div>
+      </div>
+    </section>
+
+    <!-- STEP 4: FAKE CAMERA SCANNER -->
+    <section id="screen-camera" class="screen" data-screen="camera">
+      <div class="camera-frame">
+        <div class="camera-header">
+          <span class="rec-dot"></span>
+          <span class="rec-label">REC</span>
+          <span class="camera-header-title">CAMERA SCANNER</span>
+          <span class="camera-header-title-sub">SIMULATED FEED</span>
+        </div>
+
+        <div class="camera-viewport" id="camera-viewport">
+          <div class="corner corner-tl"></div>
+          <div class="corner corner-tr"></div>
+          <div class="corner corner-bl"></div>
+          <div class="corner corner-br"></div>
+          <div class="scan-line"></div>
+          <div class="crosshair" id="crosshair">
+            <div class="crosshair-h"></div>
+            <div class="crosshair-v"></div>
+          </div>
+          <div class="focus-ring" id="focus-ring"></div>
+          <div class="static-noise" aria-hidden="true"></div>
+          <div class="camera-hud">
+            <div class="hud-row">FOCUS <span id="hud-focus">ACQUIRING...</span></div>
+            <div class="hud-row">SIGNAL <span id="hud-signal">████░░</span></div>
+          </div>
+          <div class="countdown" id="countdown" aria-hidden="true"></div>
+        </div>
+
+        <div class="camera-footer">
+          <span class="warn-text">⚠ SIMULATED FEED — NO CAMERA ACCESS REQUESTED</span>
+        </div>
+      </div>
+      <div class="flash-layer" id="flash-layer" aria-hidden="true"></div>
+    </section>
+
+    <!-- STEP 5: FAKE PHOTO CAPTURE -->
+    <section id="screen-capture" class="screen" data-screen="capture">
+      <div class="panel panel-center">
+        <div class="panel-title">
+          <span class="glitch-text" data-text="CAPTURE COMPLETE">CAPTURE COMPLETE</span>
+        </div>
+        <div class="fake-photo-wrap">
+          <canvas id="fake-photo-canvas" width="300" height="300" aria-label="Simulated abstract avatar, not a real photo"></canvas>
+          <div class="fake-photo-scan"></div>
+        </div>
+        <div class="progress-outer small">
+          <div class="progress-inner" id="capture-progress-fill"></div>
+        </div>
+        <div class="deep-log" id="capture-log"></div>
+      </div>
+    </section>
+
+    <!-- STEP 6: BIG PRANK REVEAL -->
+    <section id="screen-reveal" class="screen" data-screen="reveal">
+      <div class="reveal-wrap">
+        <div class="reveal-line reveal-1" id="reveal-1">I CAUGHT YOU 😂</div>
+        <div class="reveal-line reveal-2" id="reveal-2">HAHAHAHAHAHA 😈</div>
+        <div class="reveal-line reveal-3" id="reveal-3">I TAKE A PHOTO OF YOU 📸</div>
+        <div class="reveal-line reveal-4" id="reveal-4">JUST KIDDING 😂</div>
+        <div class="reveal-sub" id="reveal-sub">YOUR CAMERA WAS NEVER ACCESSED.</div>
+      </div>
+    </section>
+
+    <!-- STEP 7: FINAL DEVICE REPORT -->
+    <section id="screen-report" class="screen" data-screen="report">
+      <div class="panel">
+        <div class="panel-title">
+          <span class="glitch-text" data-text="DEVICE REPORT">DEVICE REPORT</span>
+        </div>
+        <pre class="report-box" id="report-box"></pre>
+        <div class="report-note">This information is visible to any website you visit. It never left your browser.</div>
+      </div>
+    </section>
+
+    <!-- STEP 8: FINAL MESSAGE / CTA -->
+    <section id="screen-final" class="screen" data-screen="final">
+      <div class="final-wrap">
+        <div class="final-title">YOU WALKED STRAIGHT<br />INTO THE TRAP 😂</div>
+        <div class="final-sub">Now go back to Instagram 😈</div>
+        <button id="return-btn" class="return-btn" type="button">
+          <span>RETURN TO INSTAGRAM</span>
+        </button>
+        <div class="final-footnote">100% harmless prank · no data collected · no camera accessed</div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>

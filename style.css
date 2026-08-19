@@ -1,0 +1,816 @@
+/* ==========================================================================
+   HACKER SCANNER PRANK — STYLES
+   Black / neon-green terminal aesthetic with red warning accents.
+   ========================================================================== */
+
+:root {
+  --bg: #050705;
+  --bg-alt: #0a0f0a;
+  --green: #00ff66;
+  --green-dim: #0a9c42;
+  --green-glow: rgba(0, 255, 102, 0.55);
+  --red: #ff2b3d;
+  --red-glow: rgba(255, 43, 61, 0.6);
+  --amber: #ffd23f;
+  --white: #eafff0;
+  --mono: "Courier New", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --border-glow: 0 0 8px var(--green-glow), 0 0 22px rgba(0, 255, 102, 0.25);
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+body {
+  font-family: var(--mono);
+  color: var(--green);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+  min-height: 100dvh;
+}
+
+#app {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  z-index: 2;
+}
+
+/* ---------------------------------------------------------------------- */
+/* SCREEN MANAGEMENT                                                      */
+/* ---------------------------------------------------------------------- */
+
+.screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.screen.active {
+  display: flex;
+  opacity: 1;
+}
+
+.screen.leaving {
+  opacity: 0;
+}
+
+/* ---------------------------------------------------------------------- */
+/* CRT / NOISE / VIGNETTE OVERLAYS                                        */
+/* ---------------------------------------------------------------------- */
+
+.crt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  mix-blend-mode: overlay;
+  animation: flicker 6s infinite;
+}
+
+.vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 19;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.65) 100%);
+}
+
+.noise-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 21;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  animation: noise-shift 0.4s steps(2) infinite;
+}
+
+@keyframes noise-shift {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(-2%, 1%); }
+  100% { transform: translate(1%, -2%); }
+}
+
+@keyframes flicker {
+  0%, 100% { opacity: 1; }
+  92% { opacity: 1; }
+  93% { opacity: 0.85; }
+  94% { opacity: 1; }
+  96% { opacity: 0.9; }
+  97% { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* SHARED TYPOGRAPHY / GLOW                                               */
+/* ---------------------------------------------------------------------- */
+
+.glitch-text {
+  position: relative;
+  font-size: clamp(1.1rem, 5vw, 1.8rem);
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--green);
+  text-shadow: var(--border-glow);
+  text-transform: uppercase;
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  overflow: hidden;
+  opacity: 0.7;
+}
+
+.glitch-text::before {
+  color: var(--red);
+  animation: glitch-1 3.2s infinite linear;
+  clip-path: inset(0 0 60% 0);
+}
+
+.glitch-text::after {
+  color: #3ef7ff;
+  animation: glitch-2 2.6s infinite linear;
+  clip-path: inset(60% 0 0 0);
+}
+
+@keyframes glitch-1 {
+  0%, 88%, 100% { transform: translate(0, 0); opacity: 0; }
+  89% { transform: translate(-2px, -1px); opacity: 0.8; }
+  90% { transform: translate(2px, 1px); opacity: 0.6; }
+  91% { transform: translate(-1px, 0); opacity: 0; }
+}
+
+@keyframes glitch-2 {
+  0%, 90%, 100% { transform: translate(0, 0); opacity: 0; }
+  91% { transform: translate(2px, 1px); opacity: 0.7; }
+  92% { transform: translate(-2px, -1px); opacity: 0.5; }
+  93% { transform: translate(1px, 0); opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 1 — BOOT TERMINAL                                                 */
+/* ---------------------------------------------------------------------- */
+
+.terminal-frame {
+  width: min(560px, 100%);
+  max-height: 78vh;
+  background: linear-gradient(180deg, #060a06, #030503);
+  border: 1px solid var(--green-dim);
+  border-radius: 10px;
+  box-shadow: var(--border-glow), inset 0 0 40px rgba(0, 255, 102, 0.06);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  background: rgba(0, 255, 102, 0.06);
+  border-bottom: 1px solid rgba(0, 255, 102, 0.25);
+}
+
+.dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.85; }
+.dot-red { background: #ff5f56; }
+.dot-yellow { background: #ffbd2e; }
+.dot-green { background: #27c93f; }
+
+.terminal-title {
+  margin-left: 8px;
+  font-size: 0.75rem;
+  color: var(--green-dim);
+  letter-spacing: 0.05em;
+}
+
+.terminal-body {
+  padding: 18px 16px 22px;
+  overflow-y: auto;
+  min-height: 220px;
+}
+
+.boot-log {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: clamp(0.78rem, 3.4vw, 0.95rem);
+  line-height: 1.65;
+  color: var(--green);
+  text-shadow: 0 0 6px var(--green-glow);
+}
+
+.cursor-block {
+  display: inline-block;
+  width: 8px;
+  height: 16px;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green-glow);
+  margin-left: 4px;
+  animation: blink 1s steps(1) infinite;
+  vertical-align: text-bottom;
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+
+.skip-hint {
+  margin-top: 16px;
+  font-size: 0.7rem;
+  color: var(--green-dim);
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+/* ---------------------------------------------------------------------- */
+/* GENERIC PANEL                                                          */
+/* ---------------------------------------------------------------------- */
+
+.panel {
+  width: min(560px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 22px;
+}
+
+.panel-center {
+  text-align: center;
+}
+
+.panel-title {
+  text-align: center;
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 2 — RADAR / SCANNER                                               */
+/* ---------------------------------------------------------------------- */
+
+.radar-wrap {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.radar {
+  position: relative;
+  width: clamp(180px, 55vw, 240px);
+  height: clamp(180px, 55vw, 240px);
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 102, 0.35);
+  background: radial-gradient(circle, rgba(0, 255, 102, 0.06) 0%, transparent 70%);
+  box-shadow: var(--border-glow);
+}
+
+.radar-ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 102, 0.25);
+}
+
+.r1 { inset: 15%; }
+.r2 { inset: 32%; }
+.r3 { inset: 48%; }
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(0, 255, 102, 0.55), transparent 35%);
+  animation: sweep 2.6s linear infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes sweep {
+  to { transform: rotate(360deg); }
+}
+
+.radar-blip {
+  position: absolute;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 8px var(--green-glow);
+  animation: blip-pulse 1.8s ease-in-out infinite;
+}
+
+.b1 { top: 30%; left: 62%; animation-delay: 0.2s; }
+.b2 { top: 65%; left: 35%; animation-delay: 0.9s; }
+.b3 { top: 48%; left: 50%; animation-delay: 1.4s; }
+
+@keyframes blip-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.8); opacity: 0.3; }
+}
+
+.data-readout {
+  width: 100%;
+  font-size: clamp(0.72rem, 3.3vw, 0.88rem);
+  line-height: 1.9;
+  white-space: pre-wrap;
+  background: rgba(0, 255, 102, 0.04);
+  border: 1px solid rgba(0, 255, 102, 0.2);
+  border-radius: 6px;
+  padding: 14px 16px;
+  min-height: 40px;
+}
+
+.data-readout .row-label {
+  color: var(--green-dim);
+}
+
+.data-readout .row-value {
+  color: var(--white);
+  text-shadow: 0 0 6px var(--green-glow);
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 3 — DEEP SCAN PROGRESS                                            */
+/* ---------------------------------------------------------------------- */
+
+.progress-outer {
+  width: 100%;
+  height: 16px;
+  border: 1px solid var(--green-dim);
+  border-radius: 4px;
+  background: rgba(0, 255, 102, 0.05);
+  overflow: hidden;
+  box-shadow: inset 0 0 8px rgba(0, 255, 102, 0.15);
+}
+
+.progress-outer.small {
+  height: 10px;
+  width: min(260px, 80%);
+}
+
+.progress-inner {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--green-dim), var(--green));
+  box-shadow: 0 0 12px var(--green-glow);
+  transition: width 0.12s linear;
+}
+
+.progress-percent {
+  font-size: 1.4rem;
+  letter-spacing: 0.05em;
+  text-shadow: 0 0 8px var(--green-glow);
+}
+
+.deep-log {
+  width: 100%;
+  min-height: 80px;
+  font-size: clamp(0.72rem, 3.2vw, 0.85rem);
+  line-height: 1.8;
+  color: var(--green-dim);
+  text-align: left;
+  white-space: pre-wrap;
+}
+
+.deep-log .ok { color: var(--green); }
+.deep-log .warn { color: var(--red); text-shadow: 0 0 6px var(--red-glow); }
+
+/* ---------------------------------------------------------------------- */
+/* STEP 4 — FAKE CAMERA SCANNER                                           */
+/* ---------------------------------------------------------------------- */
+
+.camera-frame {
+  width: min(420px, 100%);
+  height: min(78vh, 640px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--red);
+  border-radius: 12px;
+  box-shadow: 0 0 10px var(--red-glow), 0 0 30px rgba(255, 43, 61, 0.2);
+  overflow: hidden;
+  background: #030402;
+}
+
+.camera-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  background: rgba(255, 43, 61, 0.08);
+  border-bottom: 1px solid rgba(255, 43, 61, 0.3);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+}
+
+.rec-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--red);
+  box-shadow: 0 0 8px var(--red-glow);
+  animation: rec-blink 1s ease-in-out infinite;
+}
+
+@keyframes rec-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.25; }
+}
+
+.rec-label { color: var(--red); font-weight: 700; }
+
+.camera-header-title {
+  margin-left: auto;
+  color: var(--white);
+  font-weight: 700;
+}
+
+.camera-header-title-sub {
+  color: var(--green-dim);
+  font-size: 0.6rem;
+}
+
+.camera-viewport {
+  position: relative;
+  flex: 1;
+  margin: 14px;
+  border-radius: 8px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 50% 40%, rgba(0, 255, 102, 0.05), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(0, 255, 102, 0.03) 0 2px, transparent 2px 4px),
+    #010401;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.corner {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border: 2px solid var(--green);
+  box-shadow: 0 0 8px var(--green-glow);
+}
+
+.corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
+.corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
+.corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
+.corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+
+.scan-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--green), transparent);
+  box-shadow: 0 0 12px var(--green-glow);
+  animation: scan-move 2.4s ease-in-out infinite;
+}
+
+@keyframes scan-move {
+  0% { top: 8%; }
+  50% { top: 90%; }
+  100% { top: 8%; }
+}
+
+.crosshair {
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  opacity: 0.8;
+}
+
+.crosshair-h, .crosshair-v {
+  position: absolute;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green-glow);
+}
+
+.crosshair-h { top: 50%; left: 0; width: 100%; height: 1px; }
+.crosshair-v { left: 50%; top: 0; height: 100%; width: 1px; }
+
+.focus-ring {
+  position: absolute;
+  width: 110px;
+  height: 110px;
+  border: 1px solid var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 10px var(--red-glow);
+  opacity: 0.85;
+  animation: focus-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes focus-pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.12); }
+}
+
+.static-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.06;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  animation: noise-shift 0.5s steps(2) infinite;
+  pointer-events: none;
+}
+
+.camera-hud {
+  position: absolute;
+  bottom: 10px;
+  left: 12px;
+  font-size: 0.62rem;
+  color: var(--green-dim);
+  line-height: 1.6;
+  letter-spacing: 0.05em;
+}
+
+.hud-row span { color: var(--green); margin-left: 6px; }
+
+.countdown {
+  position: absolute;
+  font-size: clamp(3.5rem, 20vw, 6rem);
+  font-weight: 700;
+  color: var(--red);
+  text-shadow: 0 0 24px var(--red-glow);
+}
+
+.camera-footer {
+  padding: 10px 14px 14px;
+  text-align: center;
+}
+
+.warn-text {
+  font-size: 0.62rem;
+  color: var(--red);
+  letter-spacing: 0.05em;
+}
+
+.flash-layer {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  z-index: 30;
+  pointer-events: none;
+}
+
+.flash-layer.flash-active {
+  animation: camera-flash 0.45s ease-out;
+}
+
+@keyframes camera-flash {
+  0% { opacity: 0; }
+  15% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 5 — FAKE PHOTO CAPTURE                                            */
+/* ---------------------------------------------------------------------- */
+
+.fake-photo-wrap {
+  position: relative;
+  width: clamp(200px, 60vw, 280px);
+  height: clamp(200px, 60vw, 280px);
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--green-dim);
+  box-shadow: var(--border-glow);
+}
+
+.fake-photo-wrap canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.fake-photo-scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 30%;
+  background: linear-gradient(180deg, rgba(0, 255, 102, 0.25), transparent);
+  animation: photo-scan 1.6s ease-in-out infinite;
+}
+
+@keyframes photo-scan {
+  0% { top: -30%; }
+  100% { top: 100%; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 6 — BIG PRANK REVEAL                                              */
+/* ---------------------------------------------------------------------- */
+
+.reveal-wrap {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+}
+
+.reveal-line {
+  font-size: clamp(1.6rem, 9vw, 3rem);
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  opacity: 0;
+  transform: scale(0.7);
+  display: none;
+  text-shadow: 0 0 18px var(--green-glow);
+}
+
+.reveal-line.show {
+  display: block;
+  animation: pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
+}
+
+.reveal-3 { color: var(--red); text-shadow: 0 0 18px var(--red-glow); }
+
+.reveal-sub {
+  margin-top: 10px;
+  font-size: clamp(0.85rem, 4vw, 1.1rem);
+  color: var(--white);
+  opacity: 0;
+  letter-spacing: 0.04em;
+}
+
+.reveal-sub.show {
+  animation: fade-up 0.6s ease forwards;
+}
+
+@keyframes pop-in {
+  0% { opacity: 0; transform: scale(0.6) rotate(-2deg); }
+  60% { opacity: 1; transform: scale(1.08) rotate(1deg); }
+  100% { opacity: 1; transform: scale(1) rotate(0); }
+}
+
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 7 — DEVICE REPORT                                                 */
+/* ---------------------------------------------------------------------- */
+
+.report-box {
+  width: 100%;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: clamp(0.72rem, 3.2vw, 0.88rem);
+  line-height: 1.8;
+  background: rgba(0, 255, 102, 0.04);
+  border: 1px solid rgba(0, 255, 102, 0.25);
+  border-radius: 6px;
+  padding: 16px;
+  margin: 0;
+  color: var(--white);
+  text-shadow: 0 0 6px var(--green-glow);
+}
+
+.report-note {
+  margin-top: 14px;
+  font-size: 0.68rem;
+  color: var(--green-dim);
+  text-align: center;
+  letter-spacing: 0.03em;
+}
+
+/* ---------------------------------------------------------------------- */
+/* STEP 8 — FINAL MESSAGE / CTA                                           */
+/* ---------------------------------------------------------------------- */
+
+.final-wrap {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  width: min(480px, 100%);
+}
+
+.final-title {
+  font-size: clamp(1.5rem, 7vw, 2.4rem);
+  font-weight: 800;
+  line-height: 1.25;
+  text-shadow: 0 0 18px var(--green-glow);
+}
+
+.final-sub {
+  font-size: clamp(1rem, 4.5vw, 1.3rem);
+  color: var(--red);
+  text-shadow: 0 0 14px var(--red-glow);
+  font-style: italic;
+}
+
+.return-btn {
+  font-family: var(--mono);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #010401;
+  background: var(--green);
+  border: none;
+  border-radius: 6px;
+  padding: 16px 28px;
+  cursor: pointer;
+  box-shadow: 0 0 20px var(--green-glow);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  min-height: 48px;
+}
+
+.return-btn:hover,
+.return-btn:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: 0 0 30px var(--green-glow);
+}
+
+.return-btn:focus-visible {
+  outline: 2px solid var(--white);
+  outline-offset: 3px;
+}
+
+.return-btn:active {
+  transform: translateY(0);
+}
+
+.final-footnote {
+  font-size: 0.65rem;
+  color: var(--green-dim);
+  letter-spacing: 0.04em;
+}
+
+/* ---------------------------------------------------------------------- */
+/* FOCUS VISIBILITY (ACCESSIBILITY)                                       */
+/* ---------------------------------------------------------------------- */
+
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------- */
+/* REDUCED MOTION                                                         */
+/* ---------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .crt-overlay,
+  .noise-overlay,
+  .static-noise,
+  .radar-sweep,
+  .scan-line,
+  .fake-photo-scan {
+    animation: none !important;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* SMALL SCREEN TWEAKS                                                    */
+/* ---------------------------------------------------------------------- */
+
+@media (max-width: 380px) {
+  .terminal-body { padding: 14px 12px 18px; min-height: 190px; }
+  .camera-frame { height: 82vh; }
+}
+
+@media (max-height: 560px) {
+  .camera-frame { height: 90vh; }
+  .radar { width: 150px; height: 150px; }
+}
