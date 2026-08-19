@@ -1,20 +1,17 @@
 /* ==========================================================================
-   HACKER SCANNER PRANK — STYLES
-   Black / neon-green terminal aesthetic with red warning accents.
+   HACKER SCANNER PRANK — STYLES (fast/cinematic edition)
+   Black / neon-green + red HUD aesthetic, immediate full-screen camera view.
    ========================================================================== */
 
 :root {
-  --bg: #050705;
-  --bg-alt: #0a0f0a;
-  --green: #00ff66;
+  --bg: #010301;
+  --green: #00ff6a;
   --green-dim: #0a9c42;
-  --green-glow: rgba(0, 255, 102, 0.55);
+  --green-glow: rgba(0, 255, 106, 0.55);
   --red: #ff2b3d;
-  --red-glow: rgba(255, 43, 61, 0.6);
-  --amber: #ffd23f;
+  --red-glow: rgba(255, 43, 61, 0.65);
   --white: #eafff0;
   --mono: "Courier New", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
-  --border-glow: 0 0 8px var(--green-glow), 0 0 22px rgba(0, 255, 102, 0.25);
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
 }
@@ -33,9 +30,10 @@ body {
   font-family: var(--mono);
   color: var(--green);
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
   position: relative;
   min-height: 100dvh;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #app {
@@ -46,66 +44,41 @@ body {
 }
 
 /* ---------------------------------------------------------------------- */
-/* SCREEN MANAGEMENT                                                      */
-/* ---------------------------------------------------------------------- */
-
-.screen {
-  position: absolute;
-  inset: 0;
-  display: none;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.screen.active {
-  display: flex;
-  opacity: 1;
-}
-
-.screen.leaving {
-  opacity: 0;
-}
-
-/* ---------------------------------------------------------------------- */
-/* CRT / NOISE / VIGNETTE OVERLAYS                                        */
+/* OVERLAYS                                                                */
 /* ---------------------------------------------------------------------- */
 
 .crt-overlay {
   position: fixed;
   inset: 0;
-  z-index: 20;
+  z-index: 25;
   pointer-events: none;
   background: repeating-linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0.035) 0px,
-    rgba(255, 255, 255, 0.035) 1px,
+    rgba(255, 255, 255, 0.04) 0px,
+    rgba(255, 255, 255, 0.04) 1px,
     transparent 1px,
     transparent 3px
   );
   mix-blend-mode: overlay;
-  animation: flicker 6s infinite;
+  animation: flicker 5s infinite;
 }
 
 .vignette {
   position: fixed;
   inset: 0;
-  z-index: 19;
+  z-index: 24;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 45%, rgba(0, 0, 0, 0.65) 100%);
+  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.7) 100%);
 }
 
 .noise-overlay {
   position: fixed;
   inset: 0;
-  z-index: 21;
+  z-index: 26;
   pointer-events: none;
-  opacity: 0.05;
+  opacity: 0.06;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  animation: noise-shift 0.4s steps(2) infinite;
+  animation: noise-shift 0.35s steps(2) infinite;
 }
 
 @keyframes noise-shift {
@@ -123,309 +96,53 @@ body {
   97% { opacity: 1; }
 }
 
-/* ---------------------------------------------------------------------- */
-/* SHARED TYPOGRAPHY / GLOW                                               */
-/* ---------------------------------------------------------------------- */
-
-.glitch-text {
-  position: relative;
-  font-size: clamp(1.1rem, 5vw, 1.8rem);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--green);
-  text-shadow: var(--border-glow);
-  text-transform: uppercase;
+/* screen-shake, applied to #app briefly before flash */
+@keyframes screen-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-3px, 2px); }
+  40% { transform: translate(3px, -2px); }
+  60% { transform: translate(-2px, -3px); }
+  80% { transform: translate(2px, 3px); }
 }
 
-.glitch-text::before,
-.glitch-text::after {
-  content: attr(data-text);
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  overflow: hidden;
-  opacity: 0.7;
-}
-
-.glitch-text::before {
-  color: var(--red);
-  animation: glitch-1 3.2s infinite linear;
-  clip-path: inset(0 0 60% 0);
-}
-
-.glitch-text::after {
-  color: #3ef7ff;
-  animation: glitch-2 2.6s infinite linear;
-  clip-path: inset(60% 0 0 0);
-}
-
-@keyframes glitch-1 {
-  0%, 88%, 100% { transform: translate(0, 0); opacity: 0; }
-  89% { transform: translate(-2px, -1px); opacity: 0.8; }
-  90% { transform: translate(2px, 1px); opacity: 0.6; }
-  91% { transform: translate(-1px, 0); opacity: 0; }
-}
-
-@keyframes glitch-2 {
-  0%, 90%, 100% { transform: translate(0, 0); opacity: 0; }
-  91% { transform: translate(2px, 1px); opacity: 0.7; }
-  92% { transform: translate(-2px, -1px); opacity: 0.5; }
-  93% { transform: translate(1px, 0); opacity: 0; }
+#app.shake {
+  animation: screen-shake 0.35s ease-in-out;
 }
 
 /* ---------------------------------------------------------------------- */
-/* STEP 1 — BOOT TERMINAL                                                 */
+/* CAMERA SCREEN — fills the viewport immediately on load                 */
 /* ---------------------------------------------------------------------- */
 
-.terminal-frame {
-  width: min(560px, 100%);
-  max-height: 78vh;
-  background: linear-gradient(180deg, #060a06, #030503);
-  border: 1px solid var(--green-dim);
-  border-radius: 10px;
-  box-shadow: var(--border-glow), inset 0 0 40px rgba(0, 255, 102, 0.06);
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
-}
-
-.terminal-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  background: rgba(0, 255, 102, 0.06);
-  border-bottom: 1px solid rgba(0, 255, 102, 0.25);
-}
-
-.dot { width: 10px; height: 10px; border-radius: 50%; opacity: 0.85; }
-.dot-red { background: #ff5f56; }
-.dot-yellow { background: #ffbd2e; }
-.dot-green { background: #27c93f; }
-
-.terminal-title {
-  margin-left: 8px;
-  font-size: 0.75rem;
-  color: var(--green-dim);
-  letter-spacing: 0.05em;
-}
-
-.terminal-body {
-  padding: 18px 16px 22px;
-  overflow-y: auto;
-  min-height: 220px;
-}
-
-.boot-log {
-  margin: 0;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-size: clamp(0.78rem, 3.4vw, 0.95rem);
-  line-height: 1.65;
-  color: var(--green);
-  text-shadow: 0 0 6px var(--green-glow);
-}
-
-.cursor-block {
-  display: inline-block;
-  width: 8px;
-  height: 16px;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green-glow);
-  margin-left: 4px;
-  animation: blink 1s steps(1) infinite;
-  vertical-align: text-bottom;
-}
-
-@keyframes blink {
-  0%, 49% { opacity: 1; }
-  50%, 100% { opacity: 0; }
-}
-
-.skip-hint {
-  margin-top: 16px;
-  font-size: 0.7rem;
-  color: var(--green-dim);
-  letter-spacing: 0.08em;
-  opacity: 0.7;
-}
-
-/* ---------------------------------------------------------------------- */
-/* GENERIC PANEL                                                          */
-/* ---------------------------------------------------------------------- */
-
-.panel {
-  width: min(560px, 100%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 22px;
-}
-
-.panel-center {
-  text-align: center;
-}
-
-.panel-title {
-  text-align: center;
-}
-
-/* ---------------------------------------------------------------------- */
-/* STEP 2 — RADAR / SCANNER                                               */
-/* ---------------------------------------------------------------------- */
-
-.radar-wrap {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
-
-.radar {
-  position: relative;
-  width: clamp(180px, 55vw, 240px);
-  height: clamp(180px, 55vw, 240px);
-  border-radius: 50%;
-  border: 1px solid rgba(0, 255, 102, 0.35);
-  background: radial-gradient(circle, rgba(0, 255, 102, 0.06) 0%, transparent 70%);
-  box-shadow: var(--border-glow);
-}
-
-.radar-ring {
-  position: absolute;
-  border-radius: 50%;
-  border: 1px solid rgba(0, 255, 102, 0.25);
-}
-
-.r1 { inset: 15%; }
-.r2 { inset: 32%; }
-.r3 { inset: 48%; }
-
-.radar-sweep {
+.camera-screen {
   position: absolute;
   inset: 0;
-  border-radius: 50%;
-  background: conic-gradient(from 0deg, rgba(0, 255, 102, 0.55), transparent 35%);
-  animation: sweep 2.6s linear infinite;
-  mix-blend-mode: screen;
-}
-
-@keyframes sweep {
-  to { transform: rotate(360deg); }
-}
-
-.radar-blip {
-  position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 8px var(--green-glow);
-  animation: blip-pulse 1.8s ease-in-out infinite;
-}
-
-.b1 { top: 30%; left: 62%; animation-delay: 0.2s; }
-.b2 { top: 65%; left: 35%; animation-delay: 0.9s; }
-.b3 { top: 48%; left: 50%; animation-delay: 1.4s; }
-
-@keyframes blip-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.8); opacity: 0.3; }
-}
-
-.data-readout {
-  width: 100%;
-  font-size: clamp(0.72rem, 3.3vw, 0.88rem);
-  line-height: 1.9;
-  white-space: pre-wrap;
-  background: rgba(0, 255, 102, 0.04);
-  border: 1px solid rgba(0, 255, 102, 0.2);
-  border-radius: 6px;
-  padding: 14px 16px;
-  min-height: 40px;
-}
-
-.data-readout .row-label {
-  color: var(--green-dim);
-}
-
-.data-readout .row-value {
-  color: var(--white);
-  text-shadow: 0 0 6px var(--green-glow);
-}
-
-/* ---------------------------------------------------------------------- */
-/* STEP 3 — DEEP SCAN PROGRESS                                            */
-/* ---------------------------------------------------------------------- */
-
-.progress-outer {
-  width: 100%;
-  height: 16px;
-  border: 1px solid var(--green-dim);
-  border-radius: 4px;
-  background: rgba(0, 255, 102, 0.05);
-  overflow: hidden;
-  box-shadow: inset 0 0 8px rgba(0, 255, 102, 0.15);
-}
-
-.progress-outer.small {
-  height: 10px;
-  width: min(260px, 80%);
-}
-
-.progress-inner {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--green-dim), var(--green));
-  box-shadow: 0 0 12px var(--green-glow);
-  transition: width 0.12s linear;
-}
-
-.progress-percent {
-  font-size: 1.4rem;
-  letter-spacing: 0.05em;
-  text-shadow: 0 0 8px var(--green-glow);
-}
-
-.deep-log {
-  width: 100%;
-  min-height: 80px;
-  font-size: clamp(0.72rem, 3.2vw, 0.85rem);
-  line-height: 1.8;
-  color: var(--green-dim);
-  text-align: left;
-  white-space: pre-wrap;
-}
-
-.deep-log .ok { color: var(--green); }
-.deep-log .warn { color: var(--red); text-shadow: 0 0 6px var(--red-glow); }
-
-/* ---------------------------------------------------------------------- */
-/* STEP 4 — FAKE CAMERA SCANNER                                           */
-/* ---------------------------------------------------------------------- */
-
-.camera-frame {
-  width: min(420px, 100%);
-  height: min(78vh, 640px);
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--red);
-  border-radius: 12px;
-  box-shadow: 0 0 10px var(--red-glow), 0 0 30px rgba(255, 43, 61, 0.2);
-  overflow: hidden;
-  background: #030402;
+  padding: calc(10px + var(--safe-top)) 10px calc(10px + var(--safe-bottom));
+  background: #010301;
+  opacity: 0;
+  animation: camera-fade-in 0.35s ease forwards;
 }
 
-.camera-header {
+@keyframes camera-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* TOP BAR                                                                 */
+/* ---------------------------------------------------------------------- */
+
+.hud-topbar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  background: rgba(255, 43, 61, 0.08);
-  border-bottom: 1px solid rgba(255, 43, 61, 0.3);
+  justify-content: space-between;
+  padding: 4px 8px 10px;
   font-size: 0.68rem;
   letter-spacing: 0.08em;
 }
+
+.hud-topbar-left { display: flex; align-items: center; gap: 6px; }
 
 .rec-dot {
   width: 9px;
@@ -443,67 +160,141 @@ body {
 
 .rec-label { color: var(--red); font-weight: 700; }
 
-.camera-header-title {
-  margin-left: auto;
-  color: var(--white);
+.live-scan-label {
+  color: var(--green);
   font-weight: 700;
+  text-shadow: 0 0 8px var(--green-glow);
+  animation: pulse-text 1.4s ease-in-out infinite;
 }
 
-.camera-header-title-sub {
-  color: var(--green-dim);
-  font-size: 0.6rem;
+@keyframes pulse-text {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
 }
+
+.hud-topbar-right { display: flex; align-items: center; gap: 5px; color: var(--green-dim); }
+
+.battery-icon {
+  position: relative;
+  display: inline-block;
+  width: 20px;
+  height: 10px;
+  border: 1px solid var(--green-dim);
+  border-radius: 2px;
+}
+
+.battery-icon::after {
+  content: "";
+  position: absolute;
+  right: -3px;
+  top: 3px;
+  width: 2px;
+  height: 4px;
+  background: var(--green-dim);
+}
+
+.battery-fill {
+  display: block;
+  height: 100%;
+  width: 87%;
+  background: var(--green);
+  box-shadow: 0 0 4px var(--green-glow);
+}
+
+/* ---------------------------------------------------------------------- */
+/* CAMERA VIEWPORT                                                        */
+/* ---------------------------------------------------------------------- */
 
 .camera-viewport {
   position: relative;
   flex: 1;
-  margin: 14px;
-  border-radius: 8px;
+  border-radius: 10px;
   overflow: hidden;
   background:
-    radial-gradient(circle at 50% 40%, rgba(0, 255, 102, 0.05), transparent 60%),
-    repeating-linear-gradient(0deg, rgba(0, 255, 102, 0.03) 0 2px, transparent 2px 4px),
+    radial-gradient(circle at 50% 42%, rgba(0, 255, 106, 0.06), transparent 60%),
+    repeating-linear-gradient(0deg, rgba(0, 255, 106, 0.03) 0 2px, transparent 2px 4px),
     #010401;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  border: 1px solid rgba(0, 255, 106, 0.25);
+  box-shadow: 0 0 16px rgba(0, 255, 106, 0.15), inset 0 0 30px rgba(0, 0, 0, 0.6);
+}
+
+.radar-bg {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(70vw, 70vh);
+  height: min(70vw, 70vh);
+  transform: translate(-50%, -50%);
+  opacity: 0.35;
+}
+
+.radar-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 255, 106, 0.25);
+}
+
+.radar-ring.r2 { inset: 15%; }
+.radar-ring.r3 { inset: 30%; }
+
+.radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, rgba(0, 255, 106, 0.5), transparent 30%);
+  animation: sweep 1.6s linear infinite;
+  mix-blend-mode: screen;
+}
+
+@keyframes sweep {
+  to { transform: rotate(360deg); }
 }
 
 .corner {
   position: absolute;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border: 2px solid var(--green);
   box-shadow: 0 0 8px var(--green-glow);
+  z-index: 3;
 }
 
-.corner-tl { top: 10px; left: 10px; border-right: none; border-bottom: none; }
-.corner-tr { top: 10px; right: 10px; border-left: none; border-bottom: none; }
-.corner-bl { bottom: 10px; left: 10px; border-right: none; border-top: none; }
-.corner-br { bottom: 10px; right: 10px; border-left: none; border-top: none; }
+.corner-tl { top: 12px; left: 12px; border-right: none; border-bottom: none; }
+.corner-tr { top: 12px; right: 12px; border-left: none; border-bottom: none; }
+.corner-bl { bottom: 12px; left: 12px; border-right: none; border-top: none; }
+.corner-br { bottom: 12px; right: 12px; border-left: none; border-top: none; }
 
 .scan-line {
   position: absolute;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 3px;
   background: linear-gradient(90deg, transparent, var(--green), transparent);
-  box-shadow: 0 0 12px var(--green-glow);
-  animation: scan-move 2.4s ease-in-out infinite;
+  box-shadow: 0 0 14px var(--green-glow);
+  animation: scan-move 1.1s ease-in-out infinite;
+  z-index: 2;
 }
 
 @keyframes scan-move {
-  0% { top: 8%; }
-  50% { top: 90%; }
-  100% { top: 8%; }
+  0% { top: 6%; }
+  50% { top: 92%; }
+  100% { top: 6%; }
 }
 
 .crosshair {
   position: absolute;
-  width: 70px;
-  height: 70px;
-  opacity: 0.8;
+  top: 50%;
+  left: 50%;
+  width: 80px;
+  height: 80px;
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 2;
 }
+
+.crosshair.show { opacity: 0.85; }
 
 .crosshair-h, .crosshair-v {
   position: absolute;
@@ -516,154 +307,176 @@ body {
 
 .focus-ring {
   position: absolute;
-  width: 110px;
-  height: 110px;
+  top: 50%;
+  left: 50%;
+  width: 120px;
+  height: 120px;
+  transform: translate(-50%, -50%) scale(1);
   border: 1px solid var(--red);
   border-radius: 50%;
   box-shadow: 0 0 10px var(--red-glow);
-  opacity: 0.85;
-  animation: focus-pulse 1.6s ease-in-out infinite;
+  opacity: 0;
+  z-index: 2;
+}
+
+.focus-ring.show {
+  opacity: 0.9;
+  animation: focus-pulse 0.9s ease-in-out infinite;
 }
 
 @keyframes focus-pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.12); }
+  0%, 100% { transform: translate(-50%, -50%) scale(1); }
+  50% { transform: translate(-50%, -50%) scale(1.15); }
 }
 
 .static-noise {
   position: absolute;
   inset: 0;
-  opacity: 0.06;
+  opacity: 0.07;
   background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='100' height='100'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  animation: noise-shift 0.5s steps(2) infinite;
+  animation: noise-shift 0.4s steps(2) infinite;
   pointer-events: none;
+  z-index: 1;
 }
 
-.camera-hud {
+/* ---------------------------------------------------------------------- */
+/* SCAN TICKER (rapid status messages)                                    */
+/* ---------------------------------------------------------------------- */
+
+.scan-ticker {
   position: absolute;
-  bottom: 10px;
-  left: 12px;
-  font-size: 0.62rem;
-  color: var(--green-dim);
-  line-height: 1.6;
-  letter-spacing: 0.05em;
+  top: 14px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(0.62rem, 3vw, 0.78rem);
+  letter-spacing: 0.06em;
+  color: var(--green);
+  text-shadow: 0 0 8px var(--green-glow);
+  white-space: nowrap;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.15s ease;
 }
 
-.hud-row span { color: var(--green); margin-left: 6px; }
+.scan-ticker.show { opacity: 1; }
+
+/* ---------------------------------------------------------------------- */
+/* DATA PANEL                                                             */
+/* ---------------------------------------------------------------------- */
+
+.data-panel {
+  position: absolute;
+  left: 50%;
+  bottom: 14px;
+  transform: translate(-50%, 12px);
+  width: min(88%, 340px);
+  margin: 0;
+  font-size: clamp(0.6rem, 2.9vw, 0.74rem);
+  line-height: 1.55;
+  white-space: pre-wrap;
+  color: var(--white);
+  text-shadow: 0 0 6px var(--green-glow);
+  background: rgba(0, 12, 4, 0.72);
+  border: 1px solid rgba(0, 255, 106, 0.35);
+  border-radius: 6px;
+  padding: 10px 12px;
+  z-index: 4;
+  opacity: 0;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.data-panel.show {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ---------------------------------------------------------------------- */
+/* COUNTDOWN                                                              */
+/* ---------------------------------------------------------------------- */
 
 .countdown {
   position: absolute;
-  font-size: clamp(3.5rem, 20vw, 6rem);
-  font-weight: 700;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.5);
+  font-size: clamp(4rem, 26vw, 9rem);
+  font-weight: 800;
   color: var(--red);
-  text-shadow: 0 0 24px var(--red-glow);
-}
-
-.camera-footer {
-  padding: 10px 14px 14px;
-  text-align: center;
-}
-
-.warn-text {
-  font-size: 0.62rem;
-  color: var(--red);
-  letter-spacing: 0.05em;
-}
-
-.flash-layer {
-  position: fixed;
-  inset: 0;
-  background: #ffffff;
+  text-shadow: 0 0 30px var(--red-glow), 0 0 60px var(--red-glow);
   opacity: 0;
-  z-index: 30;
-  pointer-events: none;
+  z-index: 5;
+  transition: opacity 0.12s ease, transform 0.12s ease;
 }
 
-.flash-layer.flash-active {
-  animation: camera-flash 0.45s ease-out;
-}
-
-@keyframes camera-flash {
-  0% { opacity: 0; }
-  15% { opacity: 1; }
-  100% { opacity: 0; }
+.countdown.show {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 /* ---------------------------------------------------------------------- */
-/* STEP 5 — FAKE PHOTO CAPTURE                                            */
+/* CAPTURE STATUS TEXT                                                    */
 /* ---------------------------------------------------------------------- */
 
-.fake-photo-wrap {
-  position: relative;
-  width: clamp(200px, 60vw, 280px);
-  height: clamp(200px, 60vw, 280px);
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid var(--green-dim);
-  box-shadow: var(--border-glow);
-}
-
-.fake-photo-wrap canvas {
-  width: 100%;
-  height: 100%;
-  display: block;
-}
-
-.fake-photo-scan {
+.capture-status {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 0;
-  height: 30%;
-  background: linear-gradient(180deg, rgba(0, 255, 102, 0.25), transparent);
-  animation: photo-scan 1.6s ease-in-out infinite;
-}
-
-@keyframes photo-scan {
-  0% { top: -30%; }
-  100% { top: 100%; }
-}
-
-/* ---------------------------------------------------------------------- */
-/* STEP 6 — BIG PRANK REVEAL                                              */
-/* ---------------------------------------------------------------------- */
-
-.reveal-wrap {
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: clamp(1rem, 5.5vw, 1.6rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--green);
+  text-shadow: 0 0 16px var(--green-glow);
+  z-index: 6;
+  opacity: 0;
   text-align: center;
+}
+
+.capture-status.show {
+  opacity: 1;
+  animation: text-blink-in 0.25s ease;
+}
+
+@keyframes text-blink-in {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.85); }
+  100% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* ---------------------------------------------------------------------- */
+/* REVEAL OVERLAY                                                         */
+/* ---------------------------------------------------------------------- */
+
+.reveal-overlay {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 14px;
-  width: 100%;
+  z-index: 8;
+  opacity: 0;
+  background: rgba(1, 4, 1, 0.35);
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+.reveal-overlay.show {
+  opacity: 1;
 }
 
 .reveal-line {
-  font-size: clamp(1.6rem, 9vw, 3rem);
+  font-size: clamp(1.7rem, 10vw, 3.4rem);
   font-weight: 800;
-  letter-spacing: 0.02em;
+  text-align: center;
+  color: var(--green);
+  text-shadow: 0 0 20px var(--green-glow);
   opacity: 0;
-  transform: scale(0.7);
-  display: none;
-  text-shadow: 0 0 18px var(--green-glow);
+  transform: scale(0.6) rotate(-2deg);
 }
 
-.reveal-line.show {
-  display: block;
-  animation: pop-in 0.5s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
-}
-
-.reveal-3 { color: var(--red); text-shadow: 0 0 18px var(--red-glow); }
-
-.reveal-sub {
-  margin-top: 10px;
-  font-size: clamp(0.85rem, 4vw, 1.1rem);
-  color: var(--white);
-  opacity: 0;
-  letter-spacing: 0.04em;
-}
-
-.reveal-sub.show {
-  animation: fade-up 0.6s ease forwards;
+.reveal-line.pop {
+  animation: pop-in 0.4s cubic-bezier(0.2, 1.4, 0.4, 1) forwards;
 }
 
 @keyframes pop-in {
@@ -672,41 +485,83 @@ body {
   100% { opacity: 1; transform: scale(1) rotate(0); }
 }
 
+.reveal-safe-note {
+  font-size: clamp(0.72rem, 3.4vw, 0.95rem);
+  color: var(--white);
+  opacity: 0;
+  letter-spacing: 0.03em;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.reveal-safe-note.show {
+  animation: fade-up 0.5s ease forwards;
+}
+
 @keyframes fade-up {
-  from { opacity: 0; transform: translateY(14px); }
+  from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 /* ---------------------------------------------------------------------- */
-/* STEP 7 — DEVICE REPORT                                                 */
+/* BOTTOM BAR                                                             */
 /* ---------------------------------------------------------------------- */
 
-.report-box {
-  width: 100%;
-  white-space: pre-wrap;
-  word-break: break-word;
-  font-size: clamp(0.72rem, 3.2vw, 0.88rem);
-  line-height: 1.8;
-  background: rgba(0, 255, 102, 0.04);
-  border: 1px solid rgba(0, 255, 102, 0.25);
-  border-radius: 6px;
-  padding: 16px;
-  margin: 0;
-  color: var(--white);
-  text-shadow: 0 0 6px var(--green-glow);
-}
-
-.report-note {
-  margin-top: 14px;
-  font-size: 0.68rem;
-  color: var(--green-dim);
+.hud-bottombar {
+  padding-top: 10px;
   text-align: center;
-  letter-spacing: 0.03em;
+}
+
+.warn-text {
+  font-size: 0.6rem;
+  color: var(--red);
+  letter-spacing: 0.05em;
 }
 
 /* ---------------------------------------------------------------------- */
-/* STEP 8 — FINAL MESSAGE / CTA                                           */
+/* FLASH LAYER                                                            */
 /* ---------------------------------------------------------------------- */
+
+.flash-layer {
+  position: fixed;
+  inset: 0;
+  background: #ffffff;
+  opacity: 0;
+  z-index: 40;
+  pointer-events: none;
+}
+
+.flash-layer.flash-active {
+  animation: camera-flash 0.4s ease-out;
+}
+
+@keyframes camera-flash {
+  0% { opacity: 0; }
+  12% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ---------------------------------------------------------------------- */
+/* FINAL SCREEN                                                           */
+/* ---------------------------------------------------------------------- */
+
+.final-screen {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: calc(20px + var(--safe-top)) 18px calc(20px + var(--safe-bottom));
+  opacity: 0;
+  transition: opacity 0.5s ease;
+  z-index: 10;
+}
+
+.final-screen.active {
+  display: flex;
+  opacity: 1;
+}
 
 .final-wrap {
   text-align: center;
@@ -721,6 +576,7 @@ body {
   font-size: clamp(1.5rem, 7vw, 2.4rem);
   font-weight: 800;
   line-height: 1.25;
+  color: var(--green);
   text-shadow: 0 0 18px var(--green-glow);
 }
 
@@ -769,7 +625,7 @@ body {
 }
 
 /* ---------------------------------------------------------------------- */
-/* FOCUS VISIBILITY (ACCESSIBILITY)                                       */
+/* ACCESSIBILITY                                                          */
 /* ---------------------------------------------------------------------- */
 
 a:focus-visible,
@@ -777,10 +633,6 @@ button:focus-visible {
   outline: 2px solid var(--green);
   outline-offset: 3px;
 }
-
-/* ---------------------------------------------------------------------- */
-/* REDUCED MOTION                                                         */
-/* ---------------------------------------------------------------------- */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -796,21 +648,12 @@ button:focus-visible {
   .static-noise,
   .radar-sweep,
   .scan-line,
-  .fake-photo-scan {
+  #app.shake {
     animation: none !important;
   }
 }
 
-/* ---------------------------------------------------------------------- */
-/* SMALL SCREEN TWEAKS                                                    */
-/* ---------------------------------------------------------------------- */
-
-@media (max-width: 380px) {
-  .terminal-body { padding: 14px 12px 18px; min-height: 190px; }
-  .camera-frame { height: 82vh; }
-}
-
 @media (max-height: 560px) {
-  .camera-frame { height: 90vh; }
-  .radar { width: 150px; height: 150px; }
+  .data-panel { font-size: 0.58rem; }
+  .countdown { font-size: clamp(3rem, 20vw, 6rem); }
 }
